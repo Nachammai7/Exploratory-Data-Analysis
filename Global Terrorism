@@ -1,0 +1,125 @@
+# Importing libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+df = pd.read_csv("/Users/nachammai/Downloads/globalterrorism.csv" ,encoding="ISO-8859-1", low_memory = False)
+df.head()
+
+
+df.tail()
+
+# shape
+df.shape
+
+# description
+df.describe()
+
+# all column names
+df.columns.values
+
+df.rename(columns={'iyear':'Year','imonth':'Month','iday':'Day','country_txt':'Country','provstate':
+                  'State','region_txt':'Region','attacktype1_txt':'AttackType','target1':'Target',
+                  'nkill':'Killed','nwound':'Wounded','summary':'Summary','gname':'Group',
+                   'targtype1_txt':'Target_Type','weaptype1_txt':'Weapon_type','motive':'Motive',
+                  'extended':'Extended','latitude':'Latitude','longitude':'Longitude', 'target1': 'Target','city':'City'}, inplace = True)
+                  
+df.head()
+
+# Check if there is any missing values
+df.isnull().sum()
+
+print('Total no. of null values = ', df.isnull().sum().sum())
+
+# Taking only necessary columns in data frame
+df = df[['Year','Month','Day','Country','State','Region','City','Latitude','Longitude',
+                 'AttackType','Killed','Wounded','Group','Target_Type','Weapon_type']]
+df.head()
+
+df.info()
+
+# Check if there is any missing values
+df.isnull().sum()
+
+print('Total no. of null values = ', df.isnull().sum().sum())
+# Replacing NaN value in Wounded and Killed column by 0
+df['Wounded'] = df['Wounded'].fillna(0).astype(int)
+df['Killed'] = df['Killed'].fillna(0).astype(int)
+
+df.isnull().sum()
+
+# Cleaned data
+df.head()
+
+# Coorelation
+df.corr()
+
+# Heatmap to check collinearity
+import seaborn as sns
+
+plt.figure(figsize=(15,7))
+sns.heatmap(df.corr(), annot= True)
+plt.show()
+
+# Number of unique values in each column
+df.nunique()
+
+# Regions with most attacks
+plt.figure(figsize = (20,10))
+sns.barplot(x=df['Region'].value_counts().index, y=df['Region'].value_counts().values, palette='spring')
+plt.title('Most Attacked Regions')
+plt.xlabel('Regions')
+plt.ylabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.show()
+
+# Countries with most attacks
+plt.figure(figsize = (15,7))
+sns.barplot(x=df['Country'].value_counts()[:10].index, y=df['Country'].value_counts()[:10].values, palette='rocket')
+plt.title('Top 10 Most Attacked Countries')
+plt.xlabel('Countries')
+plt.ylabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.show()
+
+plt.figure(figsize = (15,7))
+sns.barplot(x=df['AttackType'].value_counts().index, y=df['AttackType'].value_counts().values, palette='viridis')
+plt.title('Top Attack Types')
+plt.xlabel('Attack Type')
+plt.ylabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.show()
+
+#Top 5 most used weapon types in terror attacks
+plt.figure(figsize = (15,7))
+sns.barplot(x=df.Weapon_type.value_counts().head(5).index, y=df.Weapon_type.value_counts().head(5).values, 
+            palette='magma')
+plt.title('Top 5 Most Used Weapons')
+plt.xlabel('Weapons')
+plt.ylabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.show()
+
+
+# No. of terrorist attacks wrt year
+plt.figure(figsize = (20,10))
+sns.barplot(x=df['Year'].value_counts().index, y=df['Year'].value_counts().values)
+plt.title('Terror Attack over the years')
+plt.xlabel('Years')
+plt.ylabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.grid()
+plt.show()
+
+
+#Terror Groups
+plt.figure(figsize = (15,7))
+sns.barplot(x = df['Group'].value_counts()[1:11].values, y = df['Group'].value_counts()[1:11].index,palette='magma')
+plt.title('Top 10 Terrorist Organisation with Highest Terror Attacks')
+plt.ylabel('Terror Group Name')
+plt.xlabel('Number of Attacks')
+plt.xticks(rotation= 90)
+plt.show()
+
+
